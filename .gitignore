@@ -34,8 +34,5 @@ coverage/
 .vscode/
 .idea/
 
-# Optional: ignore public build assets
-client/public/
-
 # Optional: ignore backend temp files
 backend/tmp/
