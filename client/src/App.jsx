@@ -1,9 +1,9 @@
 import React from "react";
-
+import LandingPage from "./pages/LandingPage";
 const App = () => {
   return (
-    <div className="text-red-500">
-      <h1>Hello World</h1>
+    <div>
+      <LandingPage />
     </div>
   );
 };
