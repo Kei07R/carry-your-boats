@@ -8,7 +8,7 @@ export default function LandingPage() {
       <img
         src={landingPageImg}
         alt="Landing"
-        className="w-48 h-48 object-contain mb-gapMd"
+        className="w-48 h-48 object-contain mb-gapMd rounded-lg shadow-lg"
       />
       <h1 className="text-brand-primary text-h1 font-sans mb-gapSm text-center">
         Welcome to Carry Your Boats
