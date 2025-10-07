@@ -11,7 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Routes
-app.use("/api/chat", chatRoutes);
+app.use("/api/", chatRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Carry Your Boats API");

@@ -1,55 +1,97 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { sendMessage } from "../api/funtions";
 import botImg from "../assets/bot.png";
 import usrImg from "../assets/user.png";
 
 export default function ChatPage() {
   const [userMessage, setUserMessage] = useState("");
-  const [chatHistory, setChatHistory] = useState([]);
+  const [chatHistory, setChatHistory] = useState([
+    { sender: "bot", text: "Hey mate, what’s standing in between you and your goals today?" },
+  ]);
   const [isSending, setIsSending] = useState(false);
+  const chatContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatHistory]);
 
   const handleSendMessage = async () => {
     if (!userMessage.trim()) return;
     setIsSending(true);
-    const userMsgObj = { sender: "user", text: userMessage };
-    setChatHistory((prev) => [...prev, userMsgObj]);
-    const reply = await sendMessage(userMessage);
-    setChatHistory((prev) => [...prev, { sender: "bot", text: reply }]);
+
+    const userMsg = { sender: "user", text: userMessage };
+    setChatHistory((prev) => [...prev, userMsg]);
     setUserMessage("");
-    setIsSending(false);
+
+    try {
+      const reply = await sendMessage(userMessage);
+      setChatHistory((prev) => [...prev, { sender: "bot", text: reply }]);
+    } catch (err) {
+      setChatHistory((prev) => [
+        ...prev,
+        { sender: "bot", text: "Sorry, I couldn’t reach the server." },
+      ]);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-brand-background">
-      <div className="flex-1 flex flex-col justify-end items-center w-full">
-        <div
-          className="w-full max-w-2xl flex-1 flex flex-col justify-end py-8 px-2 sm:px-6 md:px-8 overflow-y-auto"
-          style={{ height: "100vh" }}
-        >
-          {chatHistory.length === 0 && (
-            <div className="text-center text-brand-neutral opacity-60 mt-8">
-              Start chatting with the bot!
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-brand-background via-brand-background to-white/70 px-2 sm:px-4 py-4">
+      <div className="w-full max-w-3xl h-[85vh] flex flex-col bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-brand-secondary/20 overflow-hidden">
+        
+        {/* Header */}
+        <header className="bg-white/70 border-b border-brand-secondary/20 px-4 py-3 flex items-center justify-between shadow-sm">
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-brand-neutral hover:text-brand-primary transition-colors"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="font-medium">Back</span>
+          </Link>
+          <div className="flex items-center gap-3">
+            <div className="p-[2px] rounded-full bg-gradient-to-r from-brand-primary to-brand-secondary">
+              <img
+                src={botImg}
+                alt="Bot"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white shadow-md"
+              />
             </div>
-          )}
+          </div>
+        </header>
+
+        {/* Scrollable chat history */}
+        <div
+          ref={chatContainerRef}
+          className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 bg-gradient-to-b from-white/90 to-white/60 scroll-smooth"
+        >
           {chatHistory.map((msg, idx) => (
             <div
               key={idx}
-              className={`flex items-end mb-4 ${
-                msg.sender === "user" ? "justify-end" : "justify-start"
-              }`}
+              className={`flex items-end mb-5 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
             >
               {msg.sender === "bot" && (
                 <img
                   src={botImg}
                   alt="Bot"
-                  className="w-10 h-10 rounded-full mr-3 border-2 border-brand-secondary shadow"
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-full mr-3 border border-brand-secondary/20 shadow-sm"
                 />
               )}
               <div
-                className={`max-w-lg px-5 py-3 rounded-2xl font-sans text-body shadow-lg ${
+                className={`px-4 py-3 sm:px-5 sm:py-3 rounded-2xl max-w-[75%] sm:max-w-[70%] leading-relaxed font-sans text-sm sm:text-base break-words ${
                   msg.sender === "user"
-                    ? "bg-brand-primary text-white"
-                    : "bg-white text-brand-neutral border border-brand-secondary"
+                    ? "bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-md"
+                    : "bg-white text-brand-neutral border border-brand-secondary/10 shadow-sm"
                 }`}
               >
                 {msg.text}
@@ -58,29 +100,33 @@ export default function ChatPage() {
                 <img
                   src={usrImg}
                   alt="You"
-                  className="w-10 h-10 rounded-full ml-3 border-2 border-brand-primary shadow"
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-full ml-3 border border-brand-primary/30 shadow-sm"
                 />
               )}
             </div>
           ))}
         </div>
-        <div className="w-full max-w-2xl px-2 sm:px-6 md:px-8 py-4 flex items-center gap-3 bg-transparent">
-          <input
-            type="text"
-            className="flex-1 px-4 py-3 rounded-2xl border border-brand-secondary focus:outline-none font-sans text-body bg-white shadow-sm"
-            placeholder="Type a message..."
-            value={userMessage}
-            onChange={(e) => setUserMessage(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-            disabled={isSending}
-          />
-          <button
-            className="bg-brand-secondary text-white px-btnX py-btnY rounded-2xl text-body font-sans hover:bg-brand-primary transition shadow-sm"
-            onClick={handleSendMessage}
-            disabled={isSending}
-          >
-            Send
-          </button>
+
+        {/* Input bar */}
+        <div className="border-t border-brand-secondary/20 bg-white/80 backdrop-blur-sm px-3 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <input
+              type="text"
+              className="flex-1 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl border border-brand-secondary/30 focus:outline-none focus:ring-2 focus:ring-brand-primary/40 transition-all text-sm sm:text-base bg-white/90"
+              placeholder="Type a message..."
+              value={userMessage}
+              onChange={(e) => setUserMessage(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && !isSending && handleSendMessage()}
+              disabled={isSending}
+            />
+            <button
+              onClick={handleSendMessage}
+              disabled={isSending}
+              className="px-5 py-2.5 sm:px-6 sm:py-3 bg-brand-secondary text-white font-medium rounded-xl hover:bg-brand-primary transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSending ? "..." : "Send"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
