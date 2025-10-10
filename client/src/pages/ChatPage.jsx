@@ -7,14 +7,18 @@ import usrImg from "../assets/user.png";
 export default function ChatPage() {
   const [userMessage, setUserMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([
-    { sender: "bot", text: "Hey mate, what’s standing in between you and your goals today?" },
+    {
+      sender: "assistant",
+      text: "What’s up, man. I’m David. How you doing? You staying hard?",
+    },
   ]);
   const [isSending, setIsSending] = useState(false);
   const chatContainerRef = useRef(null);
 
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
   }, [chatHistory]);
 
@@ -28,11 +32,11 @@ export default function ChatPage() {
 
     try {
       const reply = await sendMessage(userMessage);
-      setChatHistory((prev) => [...prev, { sender: "bot", text: reply }]);
+      setChatHistory((prev) => [...prev, { sender: "assistant", text: reply }]);
     } catch (err) {
       setChatHistory((prev) => [
         ...prev,
-        { sender: "bot", text: "Sorry, I couldn’t reach the server." },
+        { sender: "assistant", text: "Sorry, I couldn’t reach the server." },
       ]);
     } finally {
       setIsSending(false);
@@ -42,7 +46,6 @@ export default function ChatPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-brand-background via-brand-background to-white/70 px-2 sm:px-4 py-4">
       <div className="w-full max-w-3xl h-[85vh] flex flex-col bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-brand-secondary/20 overflow-hidden">
-        
         {/* Header */}
         <header className="bg-white/70 border-b border-brand-secondary/20 px-4 py-3 flex items-center justify-between shadow-sm">
           <Link
@@ -55,7 +58,12 @@ export default function ChatPage() {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             <span className="font-medium">Back</span>
           </Link>
@@ -78,9 +86,11 @@ export default function ChatPage() {
           {chatHistory.map((msg, idx) => (
             <div
               key={idx}
-              className={`flex items-end mb-5 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex items-end mb-5 ${
+                msg.sender === "user" ? "justify-end" : "justify-start"
+              }`}
             >
-              {msg.sender === "bot" && (
+              {msg.sender === "assistant" && (
                 <img
                   src={botImg}
                   alt="Bot"
@@ -116,7 +126,9 @@ export default function ChatPage() {
               placeholder="Type a message..."
               value={userMessage}
               onChange={(e) => setUserMessage(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && !isSending && handleSendMessage()}
+              onKeyDown={(e) =>
+                e.key === "Enter" && !isSending && handleSendMessage()
+              }
               disabled={isSending}
             />
             <button

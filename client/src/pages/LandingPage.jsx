@@ -16,7 +16,7 @@ export default function LandingPage() {
         </h1>
         <p className="text-brand-neutral text-body font-sans mb-8 text-center max-w-xl">
           <span className="block text-lg leading-relaxed">
-            Unlock your potential and stay motivated every day.
+            An AI-powered chatbot with David Goggins Personlity.
             <br />
             <span className="font-semibold text-brand-secondary">
               "STAY HARD!"
