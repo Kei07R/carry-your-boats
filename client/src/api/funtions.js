@@ -1,11 +1,11 @@
-export const sendMessage = async (message) => {
+export const sendMessage = async (message, chatHistory) => {
   try {
     const response = await fetch("/api/message", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message, chatHistory }),
     });
 
     if (!response.ok) {

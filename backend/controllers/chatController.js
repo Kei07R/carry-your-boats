@@ -48,18 +48,23 @@ Never break character.
 
 export const handleMessage = async (req, res) => {
   try {
+    const { message, chatHistory } = req.body;
+    const messages = [
+      { role: "system", content: SYSTEM_PROMPT },
+      ...(chatHistory || []),
+      {
+        role: "user",
+        content: message,
+      },
+    ];
+
     const response = await openai.chat.completions.create({
       model: "gemini-2.0-flash",
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        {
-          role: "user",
-          content: req.body.message,
-        },
-      ],
+      messages,
     });
-
     const responseMessage = response.choices[0].message.content;
+    console.log(messages);
+
     res.json({ reply: responseMessage });
   } catch (error) {
     console.error("Error in chat completion:", error);

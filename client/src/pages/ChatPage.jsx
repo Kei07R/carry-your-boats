@@ -8,8 +8,8 @@ export default function ChatPage() {
   const [userMessage, setUserMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([
     {
-      sender: "assistant",
-      text: "What’s up, man. I’m David. How you doing? You staying hard?",
+      role: "assistant",
+      content: "What’s up, man. I’m David. How you doing? You staying hard?",
     },
   ]);
   const [isSending, setIsSending] = useState(false);
@@ -20,23 +20,24 @@ export default function ChatPage() {
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
     }
+    // console.log(chatHistory);
   }, [chatHistory]);
 
   const handleSendMessage = async () => {
     if (!userMessage.trim()) return;
     setIsSending(true);
 
-    const userMsg = { sender: "user", text: userMessage };
+    const userMsg = { role: "user", content: userMessage };
     setChatHistory((prev) => [...prev, userMsg]);
     setUserMessage("");
 
     try {
-      const reply = await sendMessage(userMessage);
-      setChatHistory((prev) => [...prev, { sender: "assistant", text: reply }]);
+      const reply = await sendMessage(userMessage, chatHistory);
+      setChatHistory((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch (err) {
       setChatHistory((prev) => [
         ...prev,
-        { sender: "assistant", text: "Sorry, I couldn’t reach the server." },
+        { role: "assistant", content: "Sorry, I couldn’t reach the server." },
       ]);
     } finally {
       setIsSending(false);
@@ -81,16 +82,16 @@ export default function ChatPage() {
         {/* Scrollable chat history */}
         <div
           ref={chatContainerRef}
-          className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 bg-gradient-to-b from-white/90 to-white/60 scroll-smooth"
+          className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 bg-gradient-to-b from-white/90 to-white/60 scroll-smooth [scrollbar-width:none]"
         >
           {chatHistory.map((msg, idx) => (
             <div
               key={idx}
               className={`flex items-end mb-5 ${
-                msg.sender === "user" ? "justify-end" : "justify-start"
+                msg.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
-              {msg.sender === "assistant" && (
+              {msg.role === "assistant" && (
                 <img
                   src={botImg}
                   alt="Bot"
@@ -99,14 +100,14 @@ export default function ChatPage() {
               )}
               <div
                 className={`px-4 py-3 sm:px-5 sm:py-3 rounded-2xl max-w-[75%] sm:max-w-[70%] leading-relaxed font-sans text-sm sm:text-base break-words ${
-                  msg.sender === "user"
+                  msg.role === "user"
                     ? "bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-md"
                     : "bg-white text-brand-neutral border border-brand-secondary/10 shadow-sm"
                 }`}
               >
-                {msg.text}
+                {msg.content}
               </div>
-              {msg.sender === "user" && (
+              {msg.role === "user" && (
                 <img
                   src={usrImg}
                   alt="You"
