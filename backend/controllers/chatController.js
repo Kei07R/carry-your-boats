@@ -1,5 +1,5 @@
-import { config } from "dotenv";
-import OpenAI from "openai";
+const { config } = require("dotenv");
+const OpenAI = require("openai").default;
 
 config();
 
@@ -46,7 +46,7 @@ Speak in plain text only.
 Never break character.
 `;
 
-export const handleMessage = async (req, res) => {
+const handleMessage = async (req, res) => {
   try {
     const { message, chatHistory } = req.body;
     const messages = [
@@ -74,3 +74,5 @@ export const handleMessage = async (req, res) => {
     });
   }
 };
+
+module.exports = { handleMessage };
