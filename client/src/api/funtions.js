@@ -1,6 +1,6 @@
 export const sendMessage = async (message, chatHistory) => {
   try {
-    const response = await fetch("/api/chat", {
+    const response = await fetch("/api/message", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
