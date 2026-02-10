@@ -1,5 +1,5 @@
-const { config } = require("dotenv");
-const OpenAI = require("openai").default;
+import { config } from "dotenv";
+import OpenAI from "openai";
 
 config();
 
@@ -74,5 +74,3 @@ const handleMessage = async (req, res) => {
     });
   }
 };
-
-module.exports = { handleMessage };
