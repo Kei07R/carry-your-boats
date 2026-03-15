@@ -136,7 +136,7 @@ module.exports = async function handler(req, res) {
     ];
 
     const response = await openai.chat.completions.create({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       messages,
     });
 
