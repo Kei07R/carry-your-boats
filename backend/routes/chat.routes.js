@@ -3,5 +3,5 @@ const express = require("express");
 const router = express.Router();
 const { handleMessage } = require("../controllers/chatController");
 
-router.post("/message", handleMessage);
+router.post("/chat", handleMessage);
 module.exports = router;

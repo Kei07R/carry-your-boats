@@ -1,34 +1,91 @@
-import React from "react";
-import landingPageImg from "../assets/homeImg.png";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { PERSONAS } from "../personas";
 
 export default function LandingPage() {
+  const navigate = useNavigate();
+  const personas = Object.values(PERSONAS);
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-gradient-to-b from-brand-background via-brand-background to-white/50">
-      <div className="w-full max-w-4xl p-12 flex flex-col items-center bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-brand-secondary/20">
-        <img
-          src={landingPageImg}
-          alt="Landing"
-          className="w-48 h-48 object-contain mb-8 rounded-xl shadow-xl transform hover:scale-105 transition-transform duration-300"
-        />
-        <h1 className="text-h1 font-sans mb-6 text-center bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
-          Welcome to Carry Your Boats
-        </h1>
-        <p className="text-brand-neutral text-body font-sans mb-8 text-center max-w-xl">
-          <span className="block text-lg leading-relaxed">
-            An AI-powered chatbot with David Goggins Personlity.
-            <br />
-            <span className="font-semibold text-brand-secondary">
-              "STAY HARD!"
-            </span>
-          </span>
+    <div className="min-h-screen bg-gray-950 text-white flex flex-col">
+      {/* Hero */}
+      <div className="text-center pt-16 pb-10 px-4">
+        <p className="text-xs font-semibold tracking-widest uppercase text-gray-500 mb-4">
+          AI Mentor Chat
         </p>
-        <Link to="/chat" className="w-full max-w-md">
-          <button className="w-full bg-brand-secondary text-white py-4 px-8 rounded-xl text-lg font-semibold hover:bg-brand-primary transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-            Start Chatting
-          </button>
-        </Link>
+        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white mb-4">
+          Carry Your Boats
+        </h1>
+        <p className="text-gray-400 text-base sm:text-lg max-w-sm mx-auto leading-relaxed">
+          Choose a mentor. Have an honest conversation.
+        </p>
       </div>
+
+      {/* Persona Grid */}
+      <div className="flex-1 max-w-5xl mx-auto w-full px-4 pb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {personas.map((persona) => (
+            <PersonaCard
+              key={persona.id}
+              persona={persona}
+              onSelect={() =>
+                navigate("/chat", { state: { personaId: persona.id } })
+              }
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="text-center pb-8 text-gray-600 text-xs tracking-wide">
+        Powered by Google Gemini
+      </div>
+    </div>
+  );
+}
+
+function PersonaCard({ persona, onSelect }) {
+  return (
+    <div
+      className={`group bg-gray-900 border rounded-2xl p-6 flex flex-col gap-4 transition-all duration-300 cursor-pointer ${persona.borderClass}`}
+      onClick={onSelect}
+    >
+      {/* Icon */}
+      <div
+        className={`w-11 h-11 rounded-xl ${persona.iconBgClass} flex items-center justify-center text-xl flex-shrink-0`}
+      >
+        {persona.emoji}
+      </div>
+
+      {/* Name + Title */}
+      <div>
+        <h2 className="text-lg font-bold text-white leading-tight">
+          {persona.name}
+        </h2>
+        <p className={`text-xs font-semibold uppercase tracking-wider mt-1 ${persona.accentTextClass}`}>
+          {persona.title}
+        </p>
+      </div>
+
+      {/* Tagline */}
+      <p className={`text-sm italic ${persona.accentTextClass} opacity-75`}>
+        {persona.tagline}
+      </p>
+
+      {/* Description */}
+      <p className="text-gray-400 text-sm leading-relaxed flex-1">
+        {persona.description}
+      </p>
+
+      {/* CTA */}
+      <button
+        className={`w-full mt-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${persona.btnClass}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          onSelect();
+        }}
+      >
+        Begin Session
+      </button>
     </div>
   );
 }
