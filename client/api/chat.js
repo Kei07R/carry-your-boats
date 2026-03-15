@@ -1,4 +1,4 @@
-const { OpenAI } = require("openai");
+import { OpenAI } from "openai";
 
 const PERSONAS = {
   goggins: `
@@ -119,7 +119,7 @@ const openai = new OpenAI({
   baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
 });
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -145,4 +145,4 @@ module.exports = async function handler(req, res) {
     console.error("Error in chat completion:", error);
     res.status(500).json({ error: "Failed to get response from AI" });
   }
-};
+}
